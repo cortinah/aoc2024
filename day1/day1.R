@@ -9,9 +9,7 @@ input |> separate_wider_delim(x, delim="   ", names=c('a','b')) -> input
 sum(abs(sort(as.numeric(input$a)) - sort(as.numeric(input$b))))
 
 # Part 2
-count <- as.data.frame(table(input$b))
+as.data.frame(table(input$b)) -> count
 colnames(count)[1] <- 'a'
-left <- data.frame(a=input$a)
-left <- left_join(left,count)
-left |> mutate(prod=as.numeric(a)*Freq) -> left
+data.frame(a=input$a) |> left_join(count) |> mutate(prod=as.numeric(a)*Freq) -> left
 sum(left$prod, na.rm = T)
