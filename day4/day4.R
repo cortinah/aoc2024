@@ -1,39 +1,27 @@
 library(adventdrob)
 library(tidyverse)
-library(omnibus)
 input <- advent_input(day=4, year=2024)
 input <- grid_matrix(input, x)
-pad <- matrix(" ",nrow = 220, ncol = 220)
-pad[41:180,41:180] <- input
+pad <- matrix(" ",nrow = 200, ncol = 200)
+pad[31:170,31:170] <- input
 
 # Part 1
-h <- v <- r1 <- r2 <- numeric(length=nrow(pad))
-for(i in seq_len(nrow(pad))) {
-h[i] <- str_count(str_flatten(pad[i,]),"XMAS|SAMX")
-}
 
-# rotate 90
-r <- t(pad[nrow(pad):1,])
-r[is.na(r)] <- ''
-for(i in seq_len(nrow(r))) {
-  v[i] <- str_count(str_flatten(r[i,]),"XMAS|SAMX")
-}
+# horizontal
+splitm <- split(pad, row(pad))
+h <- sum(unlist(map(splitm, ~sum(str_count(str_flatten(.),"XMAS|SAMX")))))
 
-# rotate 45
-r <- rotateMatrix(pad, 46)
-r[is.na(r)] <- ''
-for(i in seq_len(nrow(r))) {
-  r1[i] <- str_count(str_flatten(r[i,]),"XMAS|SAMX")
-}
+# vertical
+splitm <- split(pad, col(pad))
+v <- sum(unlist(map(splitm, ~sum(str_count(str_flatten(.),"XMAS|SAMX")))))
 
-# rotate 135
-r <- rotateMatrix(pad, 135)
-r[is.na(r)] <- ''
-for(i in seq_len(nrow(r))) {
-  r2[i] <- str_count(str_flatten(r[i,]),"XMAS|SAMX")
-}
+# rising
+splitm <- split(pad, row(pad) + col(pad))
+r <- sum(unlist(map(splitm, ~sum(str_count(str_flatten(.),"XMAS|SAMX")))))
 
-r1[is.na(r1)] <- 0
-r2[is.na(r2)] <- 0
-sum(h+v+r1+r2)
+# descending
+splitm <- split(pad, row(pad) - col(pad))
+d <- sum(unlist(map(splitm, ~sum(str_count(str_flatten(.),"XMAS|SAMX")))))
+
+sum(h+v+r+d)
 1573 too low
