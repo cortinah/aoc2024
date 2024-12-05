@@ -53,10 +53,35 @@ fix_row <- function(row, rules) {
     while (i<l){
 
       check <- nrow(filter(rules, before==as.numeric(row[i]), after==as.numeric(row[i+1])))
-      if (check==0) {temp <- row[i]; row[i]<-row[i+1]; row[i+1]<-temp}
+      if (check==0) {temp <- row[i]; row[i]<-row[i+1]; row[i+1]<-temp; page_checked=1L; i=0}
       i <- i+1  }
     page_checked <- page_checked + 1 }
 
-  return(row)
+  return(as.numeric(row))
 }
-failed$len<-NULL
+failed$len <- NULL
+
+
+fixed <- list()
+for (i in 1:nrow(failed)) fixed[[i]] <- fix_row(failed[i,], rules)
+
+expand <- function(t) get("t")[1:21]
+fixed <- map(fixed, expand)
+fixed <- as.data.frame(do.call(rbind, fixed))
+
+len <- numeric(nrow(fixed))
+for (i in 1:nrow(fixed)) len[i] <- length(fixed[i,!is.na(as.numeric(fixed[i,]))])
+len <- ceiling(len/2)
+fixed <- cbind(fixed, len)
+
+sum <- 0
+for (i in 1:nrow(fixed)) sum <- sum + as.numeric(fixed[i, fixed[i,"len"]])
+#5476 too high
+
+
+####
+
+
+checked <- logical(nrow(fixed))
+len <- numeric(nrow(fixed))
+for (i in 1:nrow(fixed)) checked[i] <- check_row(fixed[i,], rules)
