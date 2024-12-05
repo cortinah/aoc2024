@@ -40,6 +40,7 @@ for (i in 1:nrow(passed)) sum <- sum + as.numeric(passed[i, passed[i,"len"]])
 
 
 # Part 2
+pages$len <- NULL
 failed <- pages[!checked,]
 
 fix_row <- function(row, rules) {
@@ -59,13 +60,11 @@ fix_row <- function(row, rules) {
 
   return(as.numeric(row))
 }
-failed$len <- NULL
-
 
 fixed <- list()
 for (i in 1:nrow(failed)) fixed[[i]] <- fix_row(failed[i,], rules)
 
-expand <- function(t) get("t")[1:21]
+expand <- function(t) get("t")[1:23]
 fixed <- map(fixed, expand)
 fixed <- as.data.frame(do.call(rbind, fixed))
 
@@ -76,12 +75,3 @@ fixed <- cbind(fixed, len)
 
 sum <- 0
 for (i in 1:nrow(fixed)) sum <- sum + as.numeric(fixed[i, fixed[i,"len"]])
-#5476 too high
-
-
-####
-
-
-checked <- logical(nrow(fixed))
-len <- numeric(nrow(fixed))
-for (i in 1:nrow(fixed)) checked[i] <- check_row(fixed[i,], rules)
