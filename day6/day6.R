@@ -30,18 +30,14 @@ rotate <- function(dir) {
   return (directions[((which(directions==dir)) %% 4)+1]) }
 
 
-stepcount <- 1
 nextstep <- list(initial$row, initial$col, 'u')
 
 repeat {
-#  print(paste(stepcount, nextstep))
   nextstep <- step(nextstep)
-
- if (nextstep[[1]]==0 || nextstep[[1]]==131) break()
- if (nextstep[[2]]==0 || nextstep[[2]]==131) break()
- stepcount <- stepcount + 1
- input |> filter(row==nextstep[[1]], col==nextstep[[2]]) |> select(id) -> walkid
- input[as.numeric(walkid),"value"] <- 'x'
+  if (nextstep[[1]]==0 || nextstep[[1]]==131) break()
+  if (nextstep[[2]]==0 || nextstep[[2]]==131) break()
+  input |> filter(row==nextstep[[1]], col==nextstep[[2]]) |> select(id) -> walkid
+  input[as.numeric(walkid),"value"] <- 'x'
 }
 
 input |> filter(value=='x') |> nrow()
